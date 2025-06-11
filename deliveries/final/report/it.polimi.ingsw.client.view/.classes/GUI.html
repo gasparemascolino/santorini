@@ -1,0 +1,460 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GUI</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.client.view</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GUI (it.polimi.ingsw.client.view)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 186)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.client.view;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javafx.application.Application;
+<i>4</i>&nbsp;import javafx.geometry.Pos;
+<i>5</i>&nbsp;import javafx.scene.Scene;
+<i>6</i>&nbsp;import javafx.scene.control.Label;
+<i>7</i>&nbsp;import javafx.scene.layout.HBox;
+<i>8</i>&nbsp;import javafx.scene.text.Text;
+<i>9</i>&nbsp;import javafx.stage.Stage;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import java.io.IOException;
+<i>12</i>&nbsp;import java.io.ObjectInputStream;
+<i>13</i>&nbsp;import java.io.ObjectOutputStream;
+<i>14</i>&nbsp;import java.net.Socket;
+<i>15</i>&nbsp;import java.net.SocketException;
+<i>16</i>&nbsp;import java.util.ArrayList;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import static it.polimi.ingsw.client.view.stages.BoardLayout.*;
+<i>19</i>&nbsp;import static it.polimi.ingsw.client.view.stages.StartMenu.startMenu;
+<i>20</i>&nbsp;
+<b class="nc"><i>21</i>&nbsp;public class GUI extends Application{</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    public static String worker;
+<i>24</i>&nbsp;    private static String response;
+<i>25</i>&nbsp;    protected static Socket server;
+<i>26</i>&nbsp;    private static ObjectOutputStream output;
+<i>27</i>&nbsp;    private static ObjectInputStream input;
+<i>28</i>&nbsp;    public static String message;
+<i>29</i>&nbsp;    public static int userindex;
+<i>30</i>&nbsp;    public static int numofplayers;
+<b class="nc"><i>31</i>&nbsp;    public static int currentplayer = 1;</b>
+<i>32</i>&nbsp;    public static int currentworker;
+<b class="nc"><i>33</i>&nbsp;    public static boolean startgame = false;</b>
+<b class="nc"><i>34</i>&nbsp;    public static ArrayList&lt;Text&gt; name = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>35</i>&nbsp;    public static ArrayList&lt;Text&gt; divinity = new ArrayList&lt;&gt;();</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    private static NotifyGUI notifytab;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    public static void main(String[] args) {
+<b class="nc"><i>40</i>&nbsp;        Application.launch(GUI.class);</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    @Override
+<i>44</i>&nbsp;    public void start(Stage primaryStage) throws IOException {
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;        startMenu(primaryStage);</b>
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;        primaryStage.setOnCloseRequest(event -&gt; {</b>
+<b class="nc"><i>50</i>&nbsp;            System.out.println(&quot;Stage is closing&quot;);</b>
+<i>51</i>&nbsp;        });
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    public static boolean sendMessage(String message, int number1, int number2) throws IOException {
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;        try {
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;            System.out.println(&quot;Sending message...&quot;);</b>
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;            //print output from server
+<b class="nc"><i>62</i>&nbsp;            response = (String) input.readObject();</b>
+<b class="nc"><i>63</i>&nbsp;            System.out.println(response);</b>
+<b class="nc"><i>64</i>&nbsp;            switch (response) {</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;                case &quot;How many players?&quot;:
+<b class="nc"><i>67</i>&nbsp;                    output.writeObject(number1);</b>
+<b class="nc"><i>68</i>&nbsp;                    break;</b>
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;                case &quot;Insert the name of the player&quot;:
+<b class="nc"><i>71</i>&nbsp;                    output.writeObject(message);</b>
+<b class="nc"><i>72</i>&nbsp;                    response = (String) input.readObject();</b>
+<b class="nc"><i>73</i>&nbsp;                    System.out.println(response);</b>
+<b class="nc"><i>74</i>&nbsp;                    if(response.equals(&quot;Not available!&quot;))</b>
+<b class="nc"><i>75</i>&nbsp;                        return false;</b>
+<i>76</i>&nbsp;                    else
+<b class="nc"><i>77</i>&nbsp;                        return true;</b>
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;                case &quot;Not available!&quot;:
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;                    return false;</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;                case &quot;Set worker position&quot;:
+<b class="nc"><i>84</i>&nbsp;                    output.writeObject(number1);</b>
+<b class="nc"><i>85</i>&nbsp;                    output.writeObject(number2);</b>
+<b class="nc"><i>86</i>&nbsp;                    response = (String) input.readObject();</b>
+<b class="nc"><i>87</i>&nbsp;                    System.out.println(response);</b>
+<b class="nc"><i>88</i>&nbsp;                    if(response.equals(&quot;Cell is unavailable, retry&quot;))  return false;</b>
+<b class="nc"><i>89</i>&nbsp;                    else return true;</b>
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;                case &quot;Worker chosen&quot;:
+<b class="nc"><i>92</i>&nbsp;                    if(userindex==board[number1][number2].getWorkeruserindex()){</b>
+<b class="nc"><i>93</i>&nbsp;                        output.writeObject(board[number1][number2].getWorkerindex());</b>
+<b class="nc"><i>94</i>&nbsp;                        return true;</b>
+<i>95</i>&nbsp;                    }
+<i>96</i>&nbsp;                    else{
+<b class="nc"><i>97</i>&nbsp;                        output.writeObject(-1);</b>
+<b class="nc"><i>98</i>&nbsp;                        return false;</b>
+<i>99</i>&nbsp;                    }
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;                case &quot;Cell chosen&quot;:
+<b class="nc"><i>102</i>&nbsp;                    output.writeObject(number1);</b>
+<b class="nc"><i>103</i>&nbsp;                    output.writeObject(number2);</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;                    String notify  = (String) input.readObject();</b>
+<i>106</i>&nbsp;
+<b class="nc"><i>107</i>&nbsp;                    if(notify.equals(&quot;Cell is unavailable, retry&quot;)) return false;</b>
+<b class="nc"><i>108</i>&nbsp;                    else return true;</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;                case &quot;Power Chosen&quot;:
+<b class="nc"><i>111</i>&nbsp;                    output.writeObject(number1);</b>
+<b class="nc"><i>112</i>&nbsp;                    receiveMessage();</b>
+<b class="nc"><i>113</i>&nbsp;                    break;</b>
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;                case &quot;Power Chosen Extra&quot;:
+<b class="nc"><i>116</i>&nbsp;                    output.writeObject(number1);</b>
+<b class="nc"><i>117</i>&nbsp;                    receiveMessage();</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;                    if(number1 == 1)</b>
+<b class="nc"><i>120</i>&nbsp;                        receiveMessage();</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;                    break;
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;                case &quot;Choose divinities&quot;:
+<b class="nc"><i>125</i>&nbsp;                    output.writeObject(message);</b>
+<b class="nc"><i>126</i>&nbsp;                    break;</b>
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;                case &quot;Disconnected&quot;:
+<b class="nc"><i>129</i>&nbsp;                    ChangeMessage2(&quot;Disconnected from server&quot;);</b>
+<b class="nc"><i>130</i>&nbsp;                    System.out.println(&quot;Disconnected from server&quot;);</b>
+<b class="nc"><i>131</i>&nbsp;                    server.close();</b>
+<b class="nc"><i>132</i>&nbsp;                    break;</b>
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;                default:
+<i>135</i>&nbsp;                    break;
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;
+<i>138</i>&nbsp;            }
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;        } catch (ClassNotFoundException | InterruptedException ignored) { }</b>
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;        return true;</b>
+<i>143</i>&nbsp;    }
+<i>144</i>&nbsp;    public static String receiveMessage() throws IOException, ClassNotFoundException, InterruptedException {
+<b class="nc"><i>145</i>&nbsp;        System.out.println(&quot;Receiving message...&quot;);</b>
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;        //print output from server
+<i>148</i>&nbsp;        try{
+<b class="nc"><i>149</i>&nbsp;            response = (String) input.readObject();</b>
+<b class="nc"><i>150</i>&nbsp;        }catch (SocketException ignored){}</b>
+<i>151</i>&nbsp;
+<b class="nc"><i>152</i>&nbsp;        System.out.println(response);</b>
+<b class="nc"><i>153</i>&nbsp;        switch (response) {</b>
+<i>154</i>&nbsp;
+<i>155</i>&nbsp;            case &quot;Player index&quot;:
+<b class="nc"><i>156</i>&nbsp;                userindex = (int) input.readObject();</b>
+<b class="nc"><i>157</i>&nbsp;                break;</b>
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;            case &quot;Number of players&quot;:
+<b class="nc"><i>160</i>&nbsp;                numofplayers = (int) input.readObject();</b>
+<b class="nc"><i>161</i>&nbsp;                break;</b>
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;            case &quot;Update Players&quot;:
+<b class="nc"><i>164</i>&nbsp;                return (String) input.readObject();</b>
+<i>165</i>&nbsp;
+<i>166</i>&nbsp;            case &quot;Update Divinity&quot;:
+<b class="nc"><i>167</i>&nbsp;                return (String) input.readObject();</b>
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;            case &quot;Update current client&quot;:
+<b class="nc"><i>170</i>&nbsp;                currentplayer = (int) input.readObject();</b>
+<b class="nc"><i>171</i>&nbsp;                receiveMessage();</b>
+<b class="nc"><i>172</i>&nbsp;                break;</b>
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;            case &quot;Wait the others players for join...&quot;:
+<b class="nc"><i>175</i>&nbsp;                ChangeMessage2(&quot;&quot;);</b>
+<b class="nc"><i>176</i>&nbsp;                notifytab.work();</b>
+<b class="nc"><i>177</i>&nbsp;                break;</b>
+<i>178</i>&nbsp;            case &quot;Set worker position&quot;:
+<b class="nc"><i>179</i>&nbsp;                currentworker = (int) input.readObject();</b>
+<i>180</i>&nbsp;
+<b class="nc"><i>181</i>&nbsp;                int row = (int) input.readObject();</b>
+<b class="nc"><i>182</i>&nbsp;                int column = (int) input.readObject();</b>
+<i>183</i>&nbsp;
+<b class="nc"><i>184</i>&nbsp;                board[row][column].setWorker(currentplayer, currentworker);</b>
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;                break;</b>
+<i>187</i>&nbsp;
+<i>188</i>&nbsp;            case &quot;Move Worker&quot;:
+<i>189</i>&nbsp;
+<b class="nc"><i>190</i>&nbsp;                currentworker = (int) input.readObject();</b>
+<i>191</i>&nbsp;
+<b class="nc"><i>192</i>&nbsp;                int oldrow=(int) input.readObject();</b>
+<b class="nc"><i>193</i>&nbsp;                int oldcolumn=(int) input.readObject();</b>
+<i>194</i>&nbsp;
+<b class="nc"><i>195</i>&nbsp;                int oldworkeruserindex = board[oldrow][oldcolumn].getWorkeruserindex();</b>
+<b class="nc"><i>196</i>&nbsp;                int oldworkerindex = board[oldrow][oldcolumn].getWorkerindex();</b>
+<i>197</i>&nbsp;
+<b class="nc"><i>198</i>&nbsp;                board[oldrow][oldcolumn].removeWorker();</b>
+<i>199</i>&nbsp;
+<b class="nc"><i>200</i>&nbsp;                int newrow = (int) input.readObject();</b>
+<b class="nc"><i>201</i>&nbsp;                int newcolumn = (int) input.readObject();</b>
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;                // divinities graphic consequences
+<b class="nc"><i>204</i>&nbsp;                if(board[newrow][newcolumn].getWorkeruserindex()!=-1) {</b>
+<i>205</i>&nbsp;
+<i>206</i>&nbsp;
+<b class="nc"><i>207</i>&nbsp;                    int workerpusheduserindex = board[newrow][newcolumn].getWorkeruserindex();</b>
+<b class="nc"><i>208</i>&nbsp;                    int workerpushedindex = board[newrow][newcolumn].getWorkerindex();</b>
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;                    //Divinity name
+<b class="nc"><i>211</i>&nbsp;                    String divinity = (String) input.readObject();</b>
+<i>212</i>&nbsp;
+<b class="nc"><i>213</i>&nbsp;                    if(divinity.equals(&quot;Apollo&quot;)) {</b>
+<i>214</i>&nbsp;
+<b class="nc"><i>215</i>&nbsp;                        board[newrow][newcolumn].removeWorker();</b>
+<b class="nc"><i>216</i>&nbsp;                        board[oldrow][oldcolumn].setWorker(workerpusheduserindex, workerpushedindex);</b>
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;                    }
+<i>219</i>&nbsp;
+<b class="nc"><i>220</i>&nbsp;                    if(divinity.equals(&quot;Minotaur&quot;)) {</b>
+<i>221</i>&nbsp;
+<i>222</i>&nbsp;
+<i>223</i>&nbsp;
+<b class="nc"><i>224</i>&nbsp;                        String message = (String) input.readObject();</b>
+<b class="nc"><i>225</i>&nbsp;                        System.out.println(message);</b>
+<i>226</i>&nbsp;
+<b class="nc"><i>227</i>&nbsp;                        if(message.equals(&quot;Push done&quot;)) {</b>
+<i>228</i>&nbsp;
+<b class="nc"><i>229</i>&nbsp;                            int pushedrow = (int) input.readObject();</b>
+<b class="nc"><i>230</i>&nbsp;                            int pushedcolumn = (int) input.readObject();</b>
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;                            board[newrow][newcolumn].removeWorker();</b>
+<b class="nc"><i>233</i>&nbsp;                            board[pushedrow][pushedcolumn].setWorker(workerpusheduserindex, workerpushedindex);</b>
+<i>234</i>&nbsp;
+<b class="nc"><i>235</i>&nbsp;                        }</b>
+<i>236</i>&nbsp;                        else {
+<b class="nc"><i>237</i>&nbsp;                            board[oldrow][oldcolumn].setWorker(oldworkeruserindex, oldworkerindex);</b>
+<b class="nc"><i>238</i>&nbsp;                            receiveMessage();</b>
+<b class="nc"><i>239</i>&nbsp;                            ChangeMessage2(&quot;Cell is unavailable, retry&quot;);</b>
+<b class="nc"><i>240</i>&nbsp;                            break;</b>
+<i>241</i>&nbsp;                        }
+<i>242</i>&nbsp;
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;                    }
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;                }
+<i>247</i>&nbsp;
+<b class="nc"><i>248</i>&nbsp;                board[newrow][newcolumn].setWorker(currentplayer, currentworker);</b>
+<i>249</i>&nbsp;
+<b class="nc"><i>250</i>&nbsp;                break;</b>
+<i>251</i>&nbsp;
+<i>252</i>&nbsp;            case  &quot;Build a block&quot;:
+<i>253</i>&nbsp;
+<b class="nc"><i>254</i>&nbsp;                int buildrow = (int) input.readObject();</b>
+<b class="nc"><i>255</i>&nbsp;                int buildcolumn = (int) input.readObject();</b>
+<b class="nc"><i>256</i>&nbsp;                int buildlevel= (int) input.readObject();</b>
+<i>257</i>&nbsp;
+<b class="nc"><i>258</i>&nbsp;                board[buildrow][buildcolumn].setLevel(buildlevel);</b>
+<i>259</i>&nbsp;
+<b class="nc"><i>260</i>&nbsp;                break;</b>
+<i>261</i>&nbsp;
+<i>262</i>&nbsp;            case &quot;Do you want to use the divinity power?&quot;:
+<b class="nc"><i>263</i>&nbsp;                ChangeMessage(response);</b>
+<b class="nc"><i>264</i>&nbsp;                Tilegroup.setDisable(true);</b>
+<b class="nc"><i>265</i>&nbsp;                divinitypower.setVisible(true);</b>
+<b class="nc"><i>266</i>&nbsp;                yes.setVisible(true);</b>
+<b class="nc"><i>267</i>&nbsp;                no.setVisible(true);</b>
+<b class="nc"><i>268</i>&nbsp;                break;</b>
+<i>269</i>&nbsp;
+<i>270</i>&nbsp;            case &quot;Power Off&quot;:
+<b class="nc"><i>271</i>&nbsp;                divinitypower.setVisible(false);</b>
+<b class="nc"><i>272</i>&nbsp;                divinitypower.setGraphic(divinitypowerimage);</b>
+<b class="nc"><i>273</i>&nbsp;                receiveMessage();</b>
+<b class="nc"><i>274</i>&nbsp;                break;</b>
+<i>275</i>&nbsp;
+<i>276</i>&nbsp;            case &quot;Notify setDome&quot;: //Atlas
+<b class="nc"><i>277</i>&nbsp;                int domerow = (int) input.readObject();</b>
+<b class="nc"><i>278</i>&nbsp;                int domecolumn = (int) input.readObject();</b>
+<b class="nc"><i>279</i>&nbsp;                board[domerow][domecolumn].setLevel(5);</b>
+<b class="nc"><i>280</i>&nbsp;                receiveMessage();</b>
+<b class="nc"><i>281</i>&nbsp;                break;</b>
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;            case &quot;Can&#39;t level up&quot;:
+<b class="nc"><i>284</i>&nbsp;                ChangeMessage(response);</b>
+<b class="nc"><i>285</i>&nbsp;                int preresetrow = (int) input.readObject();</b>
+<b class="nc"><i>286</i>&nbsp;                int preresetcolumn = (int) input.readObject();</b>
+<b class="nc"><i>287</i>&nbsp;                int resetrow = (int) input.readObject();</b>
+<b class="nc"><i>288</i>&nbsp;                int resetcolumn = (int) input.readObject();</b>
+<i>289</i>&nbsp;
+<b class="nc"><i>290</i>&nbsp;                int currentworker =  board[preresetrow][preresetcolumn].getWorkerindex();</b>
+<b class="nc"><i>291</i>&nbsp;                int currentuser =  board[preresetrow][preresetcolumn].getWorkeruserindex();</b>
+<i>292</i>&nbsp;
+<b class="nc"><i>293</i>&nbsp;                board[preresetrow][preresetcolumn].removeWorker();</b>
+<b class="nc"><i>294</i>&nbsp;                board[resetrow][resetcolumn].setWorker(currentuser, currentworker);</b>
+<b class="nc"><i>295</i>&nbsp;                receiveMessage();</b>
+<b class="nc"><i>296</i>&nbsp;                break;</b>
+<i>297</i>&nbsp;
+<i>298</i>&nbsp;            case &quot;EndGame&quot;:
+<b class="nc"><i>299</i>&nbsp;                ChangeMessage((String) input.readObject());</b>
+<b class="nc"><i>300</i>&nbsp;                break;</b>
+<i>301</i>&nbsp;
+<i>302</i>&nbsp;            case &quot;Disconnected&quot;:
+<b class="nc"><i>303</i>&nbsp;                Stage error = new Stage();</b>
+<b class="nc"><i>304</i>&nbsp;                error.setTitle(&quot;Error!&quot;);</b>
+<b class="nc"><i>305</i>&nbsp;                Label errormessage = new Label(&quot;Disconnected from server&quot;);</b>
+<b class="nc"><i>306</i>&nbsp;                HBox errorbox = new HBox();</b>
+<b class="nc"><i>307</i>&nbsp;                errorbox.setAlignment(Pos.CENTER);</b>
+<b class="nc"><i>308</i>&nbsp;                errorbox.getChildren().add(errormessage);</b>
+<b class="nc"><i>309</i>&nbsp;                Scene errorview = new Scene(errorbox, 300, 100);</b>
+<b class="nc"><i>310</i>&nbsp;                error.setScene(errorview);</b>
+<b class="nc"><i>311</i>&nbsp;                error.setResizable(false);</b>
+<b class="nc"><i>312</i>&nbsp;                error.show();</b>
+<i>313</i>&nbsp;
+<b class="nc"><i>314</i>&nbsp;                ChangeMessage2(&quot;Disconnected from server&quot;);</b>
+<b class="nc"><i>315</i>&nbsp;                System.out.println(&quot;Disconnected from server&quot;);</b>
+<b class="nc"><i>316</i>&nbsp;                server.close();</b>
+<b class="nc"><i>317</i>&nbsp;                break;</b>
+<i>318</i>&nbsp;
+<i>319</i>&nbsp;            case &quot;Exit&quot;:
+<b class="nc"><i>320</i>&nbsp;                ChangeMessage((String) input.readObject());</b>
+<i>321</i>&nbsp;
+<b class="nc"><i>322</i>&nbsp;                break;</b>
+<i>323</i>&nbsp;
+<i>324</i>&nbsp;            case &quot;Lost&quot;:
+<b class="nc"><i>325</i>&nbsp;                Stage error2 = new Stage();</b>
+<b class="nc"><i>326</i>&nbsp;                error2.setTitle(&quot;You lost!&quot;);</b>
+<b class="nc"><i>327</i>&nbsp;                Label errormessage2 = new Label(&quot;You lost!&quot;);</b>
+<b class="nc"><i>328</i>&nbsp;                HBox errorbox2 = new HBox();</b>
+<b class="nc"><i>329</i>&nbsp;                errorbox2.setAlignment(Pos.CENTER);</b>
+<b class="nc"><i>330</i>&nbsp;                errorbox2.getChildren().add(errormessage2);</b>
+<b class="nc"><i>331</i>&nbsp;                Scene errorview2 = new Scene(errorbox2, 300, 100);</b>
+<b class="nc"><i>332</i>&nbsp;                error2.setScene(errorview2);</b>
+<b class="nc"><i>333</i>&nbsp;                error2.setResizable(false);</b>
+<b class="nc"><i>334</i>&nbsp;                error2.show();</b>
+<b class="nc"><i>335</i>&nbsp;                gameboard.setDisable(true);</b>
+<i>336</i>&nbsp;
+<b class="nc"><i>337</i>&nbsp;                ChangeMessage(&quot; &quot;);</b>
+<b class="nc"><i>338</i>&nbsp;                ChangeMessage2(&quot;You Lost&quot;);</b>
+<b class="nc"><i>339</i>&nbsp;                int row1 = (int) input.readObject();</b>
+<b class="nc"><i>340</i>&nbsp;                int column1 = (int) input.readObject();</b>
+<b class="nc"><i>341</i>&nbsp;                int row2 = (int) input.readObject();</b>
+<b class="nc"><i>342</i>&nbsp;                int column2 = (int) input.readObject();</b>
+<i>343</i>&nbsp;
+<b class="nc"><i>344</i>&nbsp;                board[row1][column1].removeWorker();</b>
+<b class="nc"><i>345</i>&nbsp;                board[row2][column2].removeWorker();</b>
+<i>346</i>&nbsp;
+<b class="nc"><i>347</i>&nbsp;                break;</b>
+<i>348</i>&nbsp;
+<i>349</i>&nbsp;            case &quot;Chronus power is activated&quot;:
+<b class="nc"><i>350</i>&nbsp;                ChangeMessage2(&quot;Chronus power is activated&quot;);</b>
+<b class="nc"><i>351</i>&nbsp;                server.close();</b>
+<b class="nc"><i>352</i>&nbsp;                break;</b>
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;            default:
+<b class="nc"><i>355</i>&nbsp;                ChangeMessage(response);</b>
+<b class="nc"><i>356</i>&nbsp;                if(!message2.getText().equals(&quot;Athena Power is activated&quot;)) ChangeMessage2(&quot;&quot;);</b>
+<i>357</i>&nbsp;                break;
+<i>358</i>&nbsp;        }
+<b class="nc"><i>359</i>&nbsp;        return null;</b>
+<i>360</i>&nbsp;    }
+<i>361</i>&nbsp;
+<i>362</i>&nbsp;
+<i>363</i>&nbsp;    public void setServerConnection(Socket connection) throws IOException {
+<i>364</i>&nbsp;
+<b class="nc"><i>365</i>&nbsp;        server = connection;</b>
+<i>366</i>&nbsp;
+<b class="nc"><i>367</i>&nbsp;        output = new ObjectOutputStream(server.getOutputStream());</b>
+<b class="nc"><i>368</i>&nbsp;        input = new ObjectInputStream(server.getInputStream());</b>
+<i>369</i>&nbsp;
+<b class="nc"><i>370</i>&nbsp;        notifytab = new NotifyGUI(input);</b>
+<b class="nc"><i>371</i>&nbsp;        Thread notifytabthread = new Thread(notifytab);</b>
+<b class="nc"><i>372</i>&nbsp;        notifytabthread.start();</b>
+<i>373</i>&nbsp;
+<i>374</i>&nbsp;    }
+<i>375</i>&nbsp;
+<i>376</i>&nbsp;
+<i>377</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 00:14</div>
+</div>
+</body>
+</html>

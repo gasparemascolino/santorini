@@ -1,0 +1,422 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NotifyGUI</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.client.view</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NotifyGUI (it.polimi.ingsw.client.view)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NotifyGUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 151)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.client.view;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import javafx.application.Platform;
+<i>5</i>&nbsp;import javafx.geometry.Pos;
+<i>6</i>&nbsp;import javafx.scene.Scene;
+<i>7</i>&nbsp;import javafx.scene.control.Label;
+<i>8</i>&nbsp;import javafx.scene.layout.HBox;
+<i>9</i>&nbsp;import javafx.stage.Stage;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import java.io.FileNotFoundException;
+<i>12</i>&nbsp;import java.io.IOException;
+<i>13</i>&nbsp;import java.io.ObjectInputStream;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import static it.polimi.ingsw.client.view.GUI.*;
+<i>16</i>&nbsp;import static it.polimi.ingsw.client.view.stages.BoardLayout.*;
+<i>17</i>&nbsp;import static it.polimi.ingsw.client.view.stages.BoardLayout.ChangeMessage;
+<i>18</i>&nbsp;import static it.polimi.ingsw.client.view.stages.BoardLayout.ChangeMessage2;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;/**
+<i>21</i>&nbsp; * When the CLI is deactivated, NotifyCLi receives the notifications to update it
+<i>22</i>&nbsp; * @author Eugenio Facciolo
+<i>23</i>&nbsp; */
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;public class NotifyGUI implements Runnable{
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;    private String responsesend=null;</b>
+<i>28</i>&nbsp;    private ObjectInputStream input;
+<b class="nc"><i>29</i>&nbsp;    private boolean connection=true;</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    public NotifyGUI(ObjectInputStream input)
+<b class="nc"><i>32</i>&nbsp;    {</b>
+<b class="nc"><i>33</i>&nbsp;        this.input=input;</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    @Override
+<i>37</i>&nbsp;    public void run() {
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;        try {
+<b class="nc"><i>40</i>&nbsp;            handleServerConnection();</b>
+<b class="nc"><i>41</i>&nbsp;        } catch (IOException | ClassNotFoundException | InterruptedException e) {</b>
+<b class="nc"><i>42</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i>43</i>&nbsp;        }</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /**
+<i>48</i>&nbsp;     * Handle the messages received by the server
+<i>49</i>&nbsp;     * @throws IOException for input or output exception
+<i>50</i>&nbsp;     * @throws ClassNotFoundException if the class doesn&#39;t exist
+<i>51</i>&nbsp;     * @throws InterruptedException for deadlock
+<i>52</i>&nbsp;     */
+<i>53</i>&nbsp;    private synchronized void handleServerConnection() throws IOException, ClassNotFoundException, InterruptedException {
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;        wait();</b>
+<i>56</i>&nbsp;
+<b class="nc"><i>57</i>&nbsp;        while (connection) {</b>
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;            System.out.println(&quot;Listening to the server....&quot;);</b>
+<i>62</i>&nbsp;            //print output from server
+<b class="nc"><i>63</i>&nbsp;            responsesend = (String) input.readObject();</b>
+<b class="nc"><i>64</i>&nbsp;            System.out.println(responsesend);</b>
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;            switch (responsesend) {</b>
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;                case &quot;Update player name&quot;:
+<i>69</i>&nbsp;                    // Update the other players
+<b class="nc"><i>70</i>&nbsp;                    name.get((int) input.readObject()).setText((String) input.readObject());</b>
+<b class="nc"><i>71</i>&nbsp;                    break;</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;                case &quot;Update available divinities&quot;:
+<b class="nc"><i>74</i>&nbsp;                    for (int i = 0; i &lt; numofplayers - userindex + 2; i++) {</b>
+<b class="nc"><i>75</i>&nbsp;                        divinity.get(i).setText((String) input.readObject());</b>
+<b class="nc"><i>76</i>&nbsp;                        System.out.println(divinity.get(i).getText());</b>
+<i>77</i>&nbsp;                    }
+<b class="nc"><i>78</i>&nbsp;                    break;</b>
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;                case &quot;Update divinity name&quot;:
+<b class="nc"><i>81</i>&nbsp;                    divinity.get((int) input.readObject()).setText((String) input.readObject());</b>
+<b class="nc"><i>82</i>&nbsp;                    break;</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;                case &quot;Update current client&quot;:
+<b class="nc"><i>85</i>&nbsp;                    currentplayer = (int) input.readObject();</b>
+<b class="nc"><i>86</i>&nbsp;                    break;</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;                case &quot;Set worker position&quot;:
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;                    currentworker = (int) input.readObject();</b>
+<b class="nc"><i>91</i>&nbsp;                    int row=(int) input.readObject();</b>
+<b class="nc"><i>92</i>&nbsp;                    int column=(int) input.readObject();</b>
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;                    Platform.runLater(() -&gt; {</b>
+<i>96</i>&nbsp;                                try {
+<i>97</i>&nbsp;
+<b class="nc"><i>98</i>&nbsp;                                    board[row][column].setWorker(currentplayer, currentworker);</b>
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;                                } catch (IOException e) {</b>
+<b class="nc"><i>101</i>&nbsp;                                    e.printStackTrace();</b>
+<b class="nc"><i>102</i>&nbsp;                                }</b>
+<i>103</i>&nbsp;                            }
+<i>104</i>&nbsp;                    );
+<i>105</i>&nbsp;
+<b class="nc"><i>106</i>&nbsp;                    break;</b>
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;                case &quot;Move Worker&quot;:
+<i>109</i>&nbsp;
+<b class="nc"><i>110</i>&nbsp;                    currentworker = (int) input.readObject();</b>
+<i>111</i>&nbsp;
+<b class="nc"><i>112</i>&nbsp;                    int oldrow=(int) input.readObject();</b>
+<b class="nc"><i>113</i>&nbsp;                    int oldcolumn=(int) input.readObject();</b>
+<i>114</i>&nbsp;
+<b class="nc"><i>115</i>&nbsp;                    int oldworkeruserindex = board[oldrow][oldcolumn].getWorkeruserindex();</b>
+<b class="nc"><i>116</i>&nbsp;                    int oldworkerindex = board[oldrow][oldcolumn].getWorkerindex();</b>
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;                    Platform.runLater(() -&gt; {</b>
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;                                board[oldrow][oldcolumn].removeWorker();</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;                            }
+<i>123</i>&nbsp;                    );
+<i>124</i>&nbsp;
+<b class="nc"><i>125</i>&nbsp;                    int newrow = (int) input.readObject();</b>
+<b class="nc"><i>126</i>&nbsp;                    int newcolumn = (int) input.readObject();</b>
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;                    //Apollo and Minotaur Power
+<b class="nc"><i>129</i>&nbsp;                    if(board[newrow][newcolumn].getWorkeruserindex()!=-1) {</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;
+<b class="nc"><i>133</i>&nbsp;                        int workerpusheduserindex = board[newrow][newcolumn].getWorkeruserindex();</b>
+<b class="nc"><i>134</i>&nbsp;                        int workerpushedindex = board[newrow][newcolumn].getWorkerindex();</b>
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;                        //Divinity name
+<b class="nc"><i>138</i>&nbsp;                        String divinity = (String) input.readObject();</b>
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;
+<b class="nc"><i>141</i>&nbsp;                        if (divinity.equals(&quot;Apollo&quot;)) {</b>
+<i>142</i>&nbsp;
+<b class="nc"><i>143</i>&nbsp;                            Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>144</i>&nbsp;                                        board[newrow][newcolumn].removeWorker();</b>
+<i>145</i>&nbsp;                                        try {
+<b class="nc"><i>146</i>&nbsp;                                            board[oldrow][oldcolumn].setWorker(workerpusheduserindex, workerpushedindex);</b>
+<b class="nc"><i>147</i>&nbsp;                                        } catch (FileNotFoundException e) {</b>
+<b class="nc"><i>148</i>&nbsp;                                            e.printStackTrace();</b>
+<b class="nc"><i>149</i>&nbsp;                                        }</b>
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;                                    }
+<i>152</i>&nbsp;                            );
+<i>153</i>&nbsp;                        }
+<i>154</i>&nbsp;
+<b class="nc"><i>155</i>&nbsp;                        if(divinity.equals(&quot;Minotaur&quot;)) {</b>
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;
+<b class="nc"><i>158</i>&nbsp;                            String message = (String) input.readObject();</b>
+<b class="nc"><i>159</i>&nbsp;                            System.out.println(message);</b>
+<i>160</i>&nbsp;
+<b class="nc"><i>161</i>&nbsp;                            if(message.equals(&quot;Push done&quot;)) {</b>
+<i>162</i>&nbsp;
+<b class="nc"><i>163</i>&nbsp;                                int pushedrow = (int) input.readObject();</b>
+<b class="nc"><i>164</i>&nbsp;                                int pushedcolumn = (int) input.readObject();</b>
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;                                Platform.runLater(() -&gt; {</b>
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;                                            board[newrow][newcolumn].removeWorker();</b>
+<i>169</i>&nbsp;                                            try {
+<b class="nc"><i>170</i>&nbsp;                                                board[pushedrow][pushedcolumn].setWorker(workerpusheduserindex, workerpushedindex);</b>
+<b class="nc"><i>171</i>&nbsp;                                            } catch (FileNotFoundException e) {</b>
+<b class="nc"><i>172</i>&nbsp;                                                e.printStackTrace();</b>
+<b class="nc"><i>173</i>&nbsp;                                            }</b>
+<i>174</i>&nbsp;                                        }
+<i>175</i>&nbsp;                                );
+<i>176</i>&nbsp;
+<b class="nc"><i>177</i>&nbsp;                            }</b>
+<i>178</i>&nbsp;                            else {
+<b class="nc"><i>179</i>&nbsp;                                Platform.runLater(() -&gt; {</b>
+<i>180</i>&nbsp;
+<i>181</i>&nbsp;                                            try {
+<b class="nc"><i>182</i>&nbsp;                                                board[oldrow][oldcolumn].setWorker(oldworkeruserindex, oldworkerindex);</b>
+<b class="nc"><i>183</i>&nbsp;                                            } catch (FileNotFoundException e) {</b>
+<b class="nc"><i>184</i>&nbsp;                                                e.printStackTrace();</b>
+<b class="nc"><i>185</i>&nbsp;                                            }</b>
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;                                        }
+<i>188</i>&nbsp;                                );
+<i>189</i>&nbsp;
+<b class="nc"><i>190</i>&nbsp;                                break;</b>
+<i>191</i>&nbsp;                            }
+<i>192</i>&nbsp;                        }
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;
+<i>195</i>&nbsp;                    }
+<i>196</i>&nbsp;
+<b class="nc"><i>197</i>&nbsp;                    Platform.runLater(() -&gt; {</b>
+<i>198</i>&nbsp;                                try {
+<i>199</i>&nbsp;
+<b class="nc"><i>200</i>&nbsp;                                    board[newrow][newcolumn].setWorker(currentplayer, currentworker);</b>
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;                                } catch (IOException e) {</b>
+<b class="nc"><i>203</i>&nbsp;                                    e.printStackTrace();</b>
+<b class="nc"><i>204</i>&nbsp;                                }</b>
+<i>205</i>&nbsp;                            }
+<i>206</i>&nbsp;                    );
+<i>207</i>&nbsp;
+<b class="nc"><i>208</i>&nbsp;                    break;</b>
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;                case &quot;Build a block&quot;:
+<i>211</i>&nbsp;
+<b class="nc"><i>212</i>&nbsp;                    int buildrow = (int) input.readObject();</b>
+<b class="nc"><i>213</i>&nbsp;                    int buildcolumn = (int) input.readObject();</b>
+<b class="nc"><i>214</i>&nbsp;                    int buildlevel= (int) input.readObject();</b>
+<i>215</i>&nbsp;
+<b class="nc"><i>216</i>&nbsp;                    Platform.runLater(() -&gt; {</b>
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;                                try {
+<b class="nc"><i>219</i>&nbsp;                                    board[buildrow][buildcolumn].setLevel(buildlevel);</b>
+<b class="nc"><i>220</i>&nbsp;                                } catch (FileNotFoundException e) {</b>
+<b class="nc"><i>221</i>&nbsp;                                    e.printStackTrace();</b>
+<b class="nc"><i>222</i>&nbsp;                                }</b>
+<i>223</i>&nbsp;
+<i>224</i>&nbsp;                            }
+<i>225</i>&nbsp;                    );
+<i>226</i>&nbsp;
+<b class="nc"><i>227</i>&nbsp;                    break;</b>
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;                case &quot;Notify setDome&quot;:
+<b class="nc"><i>230</i>&nbsp;                    int domerow = (int) input.readObject();</b>
+<b class="nc"><i>231</i>&nbsp;                    int domecolumn = (int) input.readObject();</b>
+<b class="nc"><i>232</i>&nbsp;                    Platform.runLater(() -&gt; {</b>
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;                        try {
+<b class="nc"><i>235</i>&nbsp;                            board[domerow][domecolumn].setLevel(5);</b>
+<b class="nc"><i>236</i>&nbsp;                        } catch (FileNotFoundException e) {</b>
+<b class="nc"><i>237</i>&nbsp;                            e.printStackTrace();</b>
+<b class="nc"><i>238</i>&nbsp;                        }</b>
+<i>239</i>&nbsp;
+<i>240</i>&nbsp;                    });
+<i>241</i>&nbsp;
+<b class="nc"><i>242</i>&nbsp;                    break;</b>
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;                case &quot;Notify useDivinityPower&quot;:
+<b class="nc"><i>245</i>&nbsp;                    ChangeMessage2((String) input.readObject());</b>
+<b class="nc"><i>246</i>&nbsp;                    break;</b>
+<i>247</i>&nbsp;
+<i>248</i>&nbsp;                case &quot;Can&#39;t level up&quot;:
+<i>249</i>&nbsp;
+<b class="nc"><i>250</i>&nbsp;                    int preresetrow = (int) input.readObject();</b>
+<b class="nc"><i>251</i>&nbsp;                    int preresetcolumn = (int) input.readObject();</b>
+<b class="nc"><i>252</i>&nbsp;                    int resetrow = (int) input.readObject();</b>
+<b class="nc"><i>253</i>&nbsp;                    int resetcolumn = (int) input.readObject();</b>
+<i>254</i>&nbsp;
+<b class="nc"><i>255</i>&nbsp;                    int currentworker =  board[preresetrow][preresetcolumn].getWorkerindex();</b>
+<b class="nc"><i>256</i>&nbsp;                    int currentuser =  board[preresetrow][preresetcolumn].getWorkeruserindex();</b>
+<i>257</i>&nbsp;
+<b class="nc"><i>258</i>&nbsp;                    Platform.runLater(() -&gt; {</b>
+<i>259</i>&nbsp;
+<b class="nc"><i>260</i>&nbsp;                        board[preresetrow][preresetcolumn].removeWorker();</b>
+<i>261</i>&nbsp;                        try {
+<b class="nc"><i>262</i>&nbsp;                            board[resetrow][resetcolumn].setWorker(currentuser, currentworker);</b>
+<b class="nc"><i>263</i>&nbsp;                        } catch (FileNotFoundException e) {</b>
+<b class="nc"><i>264</i>&nbsp;                            e.printStackTrace();</b>
+<b class="nc"><i>265</i>&nbsp;                        }</b>
+<i>266</i>&nbsp;
+<i>267</i>&nbsp;                    });
+<i>268</i>&nbsp;
+<b class="nc"><i>269</i>&nbsp;                    break;</b>
+<i>270</i>&nbsp;
+<i>271</i>&nbsp;                case &quot;StartTurn&quot;:
+<b class="nc"><i>272</i>&nbsp;                    System.out.println(&quot;NotifyGUI stop listening to the server...&quot;);</b>
+<b class="nc"><i>273</i>&nbsp;                    if(!message2.getText().equals(&quot;Athena Power is activated&quot;)) ChangeMessage2(&quot;&quot;);</b>
+<b class="nc"><i>274</i>&nbsp;                    wait();</b>
+<b class="nc"><i>275</i>&nbsp;                    break;</b>
+<i>276</i>&nbsp;
+<i>277</i>&nbsp;                case &quot;EndGame&quot;:
+<b class="nc"><i>278</i>&nbsp;                    ChangeMessage((String) input.readObject());</b>
+<b class="nc"><i>279</i>&nbsp;                    connection=false;</b>
+<b class="nc"><i>280</i>&nbsp;                    server.close();</b>
+<b class="nc"><i>281</i>&nbsp;                    break;</b>
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;                case &quot;Chronus power is activated&quot;:
+<b class="nc"><i>284</i>&nbsp;                    ChangeMessage2(&quot;Chronus power is activated&quot;);</b>
+<b class="nc"><i>285</i>&nbsp;                    break;</b>
+<i>286</i>&nbsp;
+<i>287</i>&nbsp;                case &quot;Disconnected&quot;:
+<b class="nc"><i>288</i>&nbsp;                    Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>289</i>&nbsp;                        Stage error = new Stage();</b>
+<b class="nc"><i>290</i>&nbsp;                        error.setTitle(&quot;Error!&quot;);</b>
+<b class="nc"><i>291</i>&nbsp;                        Label errormessage = new Label(&quot;Disconnected from server&quot;);</b>
+<b class="nc"><i>292</i>&nbsp;                        HBox errorbox = new HBox();</b>
+<b class="nc"><i>293</i>&nbsp;                        errorbox.setAlignment(Pos.CENTER);</b>
+<b class="nc"><i>294</i>&nbsp;                        errorbox.getChildren().add(errormessage);</b>
+<b class="nc"><i>295</i>&nbsp;                        Scene errorview = new Scene(errorbox, 300, 100);</b>
+<b class="nc"><i>296</i>&nbsp;                        error.setScene(errorview);</b>
+<b class="nc"><i>297</i>&nbsp;                        error.setResizable(false);</b>
+<b class="nc"><i>298</i>&nbsp;                        error.show();</b>
+<i>299</i>&nbsp;                    });
+<i>300</i>&nbsp;
+<b class="nc"><i>301</i>&nbsp;                    ChangeMessage2(&quot;Disconnected from server&quot;);</b>
+<b class="nc"><i>302</i>&nbsp;                    System.out.println(&quot;Disconnected from server&quot;);</b>
+<b class="nc"><i>303</i>&nbsp;                    connection=false;</b>
+<b class="nc"><i>304</i>&nbsp;                    server.close();</b>
+<b class="nc"><i>305</i>&nbsp;                    break;</b>
+<i>306</i>&nbsp;
+<i>307</i>&nbsp;                case &quot;Exit&quot;:
+<b class="nc"><i>308</i>&nbsp;                    ChangeMessage2((String) input.readObject());</b>
+<b class="nc"><i>309</i>&nbsp;                    int row1 = (int) input.readObject();</b>
+<b class="nc"><i>310</i>&nbsp;                    int column1 = (int) input.readObject();</b>
+<b class="nc"><i>311</i>&nbsp;                    int row2 = (int) input.readObject();</b>
+<b class="nc"><i>312</i>&nbsp;                    int column2 = (int) input.readObject();</b>
+<i>313</i>&nbsp;
+<b class="nc"><i>314</i>&nbsp;                    Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>315</i>&nbsp;                                board[row1][column1].removeWorker();</b>
+<b class="nc"><i>316</i>&nbsp;                                board[row2][column2].removeWorker();</b>
+<i>317</i>&nbsp;                            }
+<i>318</i>&nbsp;                    );
+<b class="nc"><i>319</i>&nbsp;                    break;</b>
+<i>320</i>&nbsp;
+<i>321</i>&nbsp;                default:
+<b class="nc"><i>322</i>&nbsp;                    ChangeMessage(responsesend);</b>
+<b class="nc"><i>323</i>&nbsp;                    if(responsesend.equals(&quot;You Win! Enemy can&#39;t move&quot;)){</b>
+<b class="nc"><i>324</i>&nbsp;                        connection=false;</b>
+<b class="nc"><i>325</i>&nbsp;                        server.close();</b>
+<i>326</i>&nbsp;                    }
+<b class="nc"><i>327</i>&nbsp;                    break;</b>
+<i>328</i>&nbsp;            }
+<i>329</i>&nbsp;
+<i>330</i>&nbsp;        }
+<i>331</i>&nbsp;    }
+<i>332</i>&nbsp;
+<i>333</i>&nbsp;    /**
+<i>334</i>&nbsp;     * Awake the NotifyGUI when the GUI stop to works
+<i>335</i>&nbsp;     */
+<i>336</i>&nbsp;    public synchronized void work() {
+<b class="nc"><i>337</i>&nbsp;        notifyAll();</b>
+<i>338</i>&nbsp;    }
+<i>339</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 00:14</div>
+</div>
+</body>
+</html>

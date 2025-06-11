@@ -1,0 +1,270 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: WorkerController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.server.controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: WorkerController (it.polimi.ingsw.server.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WorkerController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (6/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.1%
+  </span>
+  <span class="absValue">
+    (51/ 56)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.server.controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.server.model.Cell;
+<i>4</i>&nbsp;import it.polimi.ingsw.server.model.GameBoard;
+<i>5</i>&nbsp;import it.polimi.ingsw.server.model.Worker;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.io.IOException;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import static it.polimi.ingsw.server.ClientHandler.winCondition;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;/**
+<i>13</i>&nbsp; * Class for worker actions
+<i>14</i>&nbsp; * @author Gaspare Mascolino
+<i>15</i>&nbsp; */
+<b class="nc"><i>16</i>&nbsp;public class WorkerController {</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * When a Player wants to move on his worker in a near cell, choose his worker and a cell
+<i>23</i>&nbsp;     *
+<i>24</i>&nbsp;     * @param worker worker to move
+<i>25</i>&nbsp;     * @param board  GameBoard
+<i>26</i>&nbsp;     * @param row    which row in GameBoard
+<i>27</i>&nbsp;     * @param column which column in GameBoard
+<i>28</i>&nbsp;     * @return true if the movement has occurred, otherwise false
+<i>29</i>&nbsp;     */
+<i>30</i>&nbsp;    public static boolean Move(Worker worker, int row, int column, GameBoard board) {
+<i>31</i>&nbsp;
+<b class="fc"><i>32</i>&nbsp;        Cell[] availableposition = enableToMove(worker, board);</b>
+<i>33</i>&nbsp;
+<b class="fc"><i>34</i>&nbsp;        int k = 0;</b>
+<b class="fc"><i>35</i>&nbsp;        while (k&lt;8 &amp;&amp; availableposition[k] != null) {</b>
+<b class="fc"><i>36</i>&nbsp;            if (availableposition[k].equals(board.cell[row][column])) {</b>
+<i>37</i>&nbsp;
+<b class="fc"><i>38</i>&nbsp;                board.cell[worker.getPosition().getRow()][worker.getPosition().getColumn()].setWorker(null);</b>
+<b class="fc"><i>39</i>&nbsp;                board.cell[row][column].setWorker(worker);</b>
+<i>40</i>&nbsp;
+<b class="fc"><i>41</i>&nbsp;                return true;</b>
+<i>42</i>&nbsp;            }
+<b class="fc"><i>43</i>&nbsp;            k++;</b>
+<i>44</i>&nbsp;        }
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;        return false;</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;
+<b class="fc"><i>50</i>&nbsp;    public static int completetowers=0;</b>
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * When a Player wants to level up a cell near him, choose his worker and a cell to build on player who controls the worker who wants to level up a cell
+<i>54</i>&nbsp;     *
+<i>55</i>&nbsp;     * @param worker worker to build
+<i>56</i>&nbsp;     * @param board  GameBoard
+<i>57</i>&nbsp;     * @param row    which row in GameBoard
+<i>58</i>&nbsp;     * @param column which column in GameBoard
+<i>59</i>&nbsp;     * @return true if the building has occurred, otherwise false
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    public static boolean Build(Worker worker, int row, int column, GameBoard board)  {
+<i>62</i>&nbsp;
+<b class="fc"><i>63</i>&nbsp;        Cell[] availableposition = enableToBuild(worker, board);</b>
+<i>64</i>&nbsp;
+<b class="fc"><i>65</i>&nbsp;        int k = 0;</b>
+<b class="fc"><i>66</i>&nbsp;        while (k&lt;8 &amp;&amp; availableposition[k] != null) {</b>
+<b class="fc"><i>67</i>&nbsp;            if (availableposition[k].equals(board.cell[row][column])) {</b>
+<b class="fc"><i>68</i>&nbsp;                board.cell[row][column].levelUp();</b>
+<b class="fc"><i>69</i>&nbsp;                if(board.cell[row][column].getLevel()==4) completetowers++;</b>
+<b class="fc"><i>70</i>&nbsp;                return true;</b>
+<i>71</i>&nbsp;            }
+<b class="fc"><i>72</i>&nbsp;            k++;</b>
+<i>73</i>&nbsp;        }
+<b class="nc"><i>74</i>&nbsp;        return false;</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    // When it is true the workers of the other players can&#39;t level up
+<b class="fc"><i>80</i>&nbsp;    public static boolean athenapower = false;</b>
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    /**
+<i>83</i>&nbsp;     *
+<i>84</i>&nbsp;     * @param condition of the Athena power
+<i>85</i>&nbsp;     */
+<i>86</i>&nbsp;    public static void SetAthenaPower(boolean condition) {
+<b class="nc"><i>87</i>&nbsp;        athenapower = condition;</b>
+<b class="nc"><i>88</i>&nbsp;    }</b>
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    /**
+<i>91</i>&nbsp;     * Method use to know where the Worker can move in occupied cell by a enemy&#39;s worker
+<i>92</i>&nbsp;     *
+<i>93</i>&nbsp;     * @param worker The worker who wants to move
+<i>94</i>&nbsp;     * @param board  GameBoard
+<i>95</i>&nbsp;     * @return a vector of Cells free where the Worker can move in
+<i>96</i>&nbsp;     */
+<i>97</i>&nbsp;    public static Cell[] enableToMove(Worker worker, GameBoard board) {
+<i>98</i>&nbsp;
+<b class="fc"><i>99</i>&nbsp;        Cell[] availableposition = new Cell[8];</b>
+<b class="fc"><i>100</i>&nbsp;        int k = 0;</b>
+<i>101</i>&nbsp;
+<b class="fc"><i>102</i>&nbsp;        for (int i = worker.getPosition().getRow() - 1; i &lt;= worker.getPosition().getRow() + 1; i++) {</b>
+<b class="fc"><i>103</i>&nbsp;            for (int j = worker.getPosition().getColumn() - 1; j &lt;= worker.getPosition().getColumn() + 1; j++) {</b>
+<i>104</i>&nbsp;
+<b class="fc"><i>105</i>&nbsp;                if (i != worker.getPosition().getRow() || j != worker.getPosition().getColumn()) {</b>
+<i>106</i>&nbsp;
+<b class="fc"><i>107</i>&nbsp;                    if ((i &gt;= 0 &amp;&amp; i &lt; 5) &amp;&amp; (j &gt;= 0 &amp;&amp; j &lt; 5)) {</b>
+<i>108</i>&nbsp;
+<b class="fc"><i>109</i>&nbsp;                        if (!board.cell[i][j].getisOccupied() &amp;&amp; !board.cell[i][j].getDome() &amp;&amp; (board.cell[worker.getPosition().getRow()][worker.getPosition().getColumn()].getLevel() - board.cell[i][j].getLevel() &gt; -2)) {</b>
+<i>110</i>&nbsp;
+<b class="fc"><i>111</i>&nbsp;                            if (!((athenapower) &amp;&amp; (board.cell[worker.getPosition().getRow()][worker.getPosition().getColumn()].getLevel() - board.cell[i][j].getLevel() &lt; 0))) {</b>
+<b class="fc"><i>112</i>&nbsp;                                availableposition[k] = board.cell[i][j];</b>
+<b class="fc"><i>113</i>&nbsp;                                k++;</b>
+<i>114</i>&nbsp;                            }
+<i>115</i>&nbsp;                        }
+<i>116</i>&nbsp;                    }
+<i>117</i>&nbsp;                }
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;            }
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;        }
+<b class="fc"><i>122</i>&nbsp;        return availableposition;</b>
+<i>123</i>&nbsp;    }
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    /**
+<i>126</i>&nbsp;     * Method use to know where the Worker can build
+<i>127</i>&nbsp;     *
+<i>128</i>&nbsp;     * @param worker The worker who wants to build
+<i>129</i>&nbsp;     * @param board  BoardGame
+<i>130</i>&nbsp;     * @return a vector of Cells free where the Worker can build
+<i>131</i>&nbsp;     */
+<i>132</i>&nbsp;    public static Cell[] enableToBuild(Worker worker, GameBoard board) {
+<b class="fc"><i>133</i>&nbsp;        Cell[] availableposition = new Cell[8];</b>
+<b class="fc"><i>134</i>&nbsp;        int k = 0;</b>
+<i>135</i>&nbsp;
+<b class="fc"><i>136</i>&nbsp;        for (int i = worker.getPosition().getRow() - 1; i &lt;= worker.getPosition().getRow() + 1; i++) {</b>
+<b class="fc"><i>137</i>&nbsp;            for (int j = worker.getPosition().getColumn() - 1; j &lt;= worker.getPosition().getColumn() + 1; j++) {</b>
+<i>138</i>&nbsp;
+<b class="fc"><i>139</i>&nbsp;                if (i != worker.getPosition().getRow() || j != worker.getPosition().getColumn()) {</b>
+<i>140</i>&nbsp;
+<b class="fc"><i>141</i>&nbsp;                    if ((i &gt;= 0 &amp;&amp; i &lt; 5) &amp;&amp; (j &gt;= 0 &amp;&amp; j &lt; 5)) {</b>
+<i>142</i>&nbsp;
+<b class="fc"><i>143</i>&nbsp;                        if (!board.cell[i][j].getisOccupied() &amp;&amp; !board.cell[i][j].getDome()) {</b>
+<b class="fc"><i>144</i>&nbsp;                            availableposition[k] = board.cell[i][j];</b>
+<b class="fc"><i>145</i>&nbsp;                            k++;</b>
+<i>146</i>&nbsp;                        }
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;                    }
+<i>149</i>&nbsp;                }
+<i>150</i>&nbsp;            }
+<i>151</i>&nbsp;
+<i>152</i>&nbsp;        }
+<b class="fc"><i>153</i>&nbsp;        return availableposition;</b>
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    /**
+<i>157</i>&nbsp;     * Method use to know where the enemy&#39;s workers are located
+<i>158</i>&nbsp;     *
+<i>159</i>&nbsp;     * @param worker The worker who wants to move
+<i>160</i>&nbsp;     * @param board  BoardGame
+<i>161</i>&nbsp;     * @return a vector of Cells where there are enemy&#39;s Workers near the worker
+<i>162</i>&nbsp;     */
+<i>163</i>&nbsp;    public static Cell[] enemyPositions(Worker worker, GameBoard board) {
+<b class="fc"><i>164</i>&nbsp;        Cell[] availableposition = new Cell[8];</b>
+<b class="fc"><i>165</i>&nbsp;        int k = 0;</b>
+<i>166</i>&nbsp;
+<b class="fc"><i>167</i>&nbsp;        for (int i = worker.getPosition().getRow() - 1; i &lt;= worker.getPosition().getRow() + 1; i++) {</b>
+<b class="fc"><i>168</i>&nbsp;            for (int j = worker.getPosition().getColumn() - 1; j &lt;= worker.getPosition().getColumn() + 1; j++) {</b>
+<i>169</i>&nbsp;
+<b class="fc"><i>170</i>&nbsp;                if (i != worker.getPosition().getRow() || j != worker.getPosition().getColumn()) {</b>
+<i>171</i>&nbsp;
+<b class="fc"><i>172</i>&nbsp;                    if ((i &gt;= 0 &amp;&amp; i &lt; 5) &amp;&amp; (j &gt;= 0 &amp;&amp; j &lt; 5)) {</b>
+<b class="fc"><i>173</i>&nbsp;                        if((board.cell[i][j].getisOccupied()) &amp;&amp; !board.cell[i][j].getDome() &amp;&amp; (!board.cell[i][j].getWorker().getColor().equals(worker.getColor()))) {</b>
+<b class="fc"><i>174</i>&nbsp;                            availableposition[k] = new Cell(i,j);</b>
+<b class="fc"><i>175</i>&nbsp;                            availableposition[k].setWorker(board.cell[i][j].getWorker());</b>
+<b class="fc"><i>176</i>&nbsp;                            board.cell[i][j].setisOccupied(false);</b>
+<b class="fc"><i>177</i>&nbsp;                            k++;</b>
+<i>178</i>&nbsp;                        }
+<i>179</i>&nbsp;                    }
+<i>180</i>&nbsp;                }
+<i>181</i>&nbsp;            }
+<i>182</i>&nbsp;        }
+<b class="fc"><i>183</i>&nbsp;        return availableposition;</b>
+<i>184</i>&nbsp;    }
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 00:14</div>
+</div>
+</body>
+</html>

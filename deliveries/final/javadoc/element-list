@@ -1,0 +1,8 @@
+module:it.polimi.ingsw
+it.polimi.ingsw.client
+it.polimi.ingsw.client.view
+it.polimi.ingsw.client.view.stages
+it.polimi.ingsw.server
+it.polimi.ingsw.server.controller
+it.polimi.ingsw.server.controller.divinities
+it.polimi.ingsw.server.model

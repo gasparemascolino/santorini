@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Poseidon</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.server.controller.divinities</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Poseidon (it.polimi.ingsw.server.controller.divinities)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Poseidon</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.5%
+  </span>
+  <span class="absValue">
+    (3/ 24)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.server.controller.divinities;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.server.model.GameBoard;
+<i>4</i>&nbsp;import it.polimi.ingsw.server.model.Worker;
+<i>5</i>&nbsp;import it.polimi.ingsw.server.controller.Divinity;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import static it.polimi.ingsw.server.ClientHandler.*;
+<i>9</i>&nbsp;import static it.polimi.ingsw.server.model.GameBoard.showGameBoard;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import java.io.IOException;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Class behaviour of Poseidon(Your worker can build until three times more if the other worker of the player is in a ground level cell.)
+<i>16</i>&nbsp; * @author Gaspare Mascolino
+<i>17</i>&nbsp; */
+<b class="fc"><i>18</i>&nbsp;public class Poseidon implements Divinity {</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * @return name of divinity
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    @Override
+<i>24</i>&nbsp;    public String toString() {
+<b class="fc"><i>25</i>&nbsp;        return &quot;Poseidon&quot;;</b>
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * @return description of divinity power
+<i>30</i>&nbsp;     */
+<i>31</i>&nbsp;    public String Description(){
+<b class="fc"><i>32</i>&nbsp;        return(&quot;Your worker can build until three times more if the other worker of the player is in a ground level cell.\n&quot;);</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    /**
+<i>36</i>&nbsp;     * Add Behavior of Poseidon to the worker
+<i>37</i>&nbsp;     *
+<i>38</i>&nbsp;     * @param worker The Worker who need this behavior
+<i>39</i>&nbsp;     * @param board  The gameboard
+<i>40</i>&nbsp;     * @throws IOException for input or output exception
+<i>41</i>&nbsp;     * @throws ClassNotFoundException if the class doesn&#39;t exist
+<i>42</i>&nbsp;     */
+<i>43</i>&nbsp;    public void doAction(Worker worker, GameBoard board) throws IOException, ClassNotFoundException, InterruptedException {
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;        int choose;
+<b class="nc"><i>46</i>&nbsp;        int workerindex = 0;</b>
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;        workerindex = worker.getIndex();</b>
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;        if(workerindex == 1)</b>
+<b class="nc"><i>51</i>&nbsp;            workerindex = 2;</b>
+<i>52</i>&nbsp;        else
+<b class="nc"><i>53</i>&nbsp;            workerindex = 1;</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;
+<b class="nc"><i>56</i>&nbsp;        cellToMoveOn(worker, board);</b>
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        showGameBoard(board);</b>
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;        cellToBuildOn(worker, board);</b>
+<b class="nc"><i>61</i>&nbsp;        showGameBoard(board);</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        if(board.players.get(currentclient-1).getWorker(workerindex).getPosition().getLevel() == 0) {</b>
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;            for(int i = 0; i &lt; 3; i++) {</b>
+<b class="nc"><i>66</i>&nbsp;                choose = NotifyDivinityPowerOn();</b>
+<i>67</i>&nbsp;
+<b class="nc"><i>68</i>&nbsp;                if (choose == 1) {</b>
+<b class="nc"><i>69</i>&nbsp;                    NotifyUseDivinityPower();</b>
+<b class="nc"><i>70</i>&nbsp;                    cellToBuildOn(board.players.get(currentclient-1).getWorker(workerindex), board);</b>
+<b class="nc"><i>71</i>&nbsp;                    NotifyDivinityPowerOff();</b>
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;                    showGameBoard(board);</b>
+<b class="nc"><i>74</i>&nbsp;                    NotifyDivinityPowerOff();</b>
+<i>75</i>&nbsp;                }
+<i>76</i>&nbsp;                else {
+<b class="nc"><i>77</i>&nbsp;                    NotifyDivinityPowerOff();</b>
+<b class="nc"><i>78</i>&nbsp;                    return;</b>
+<i>79</i>&nbsp;                }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;            }
+<i>85</i>&nbsp;        }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;
+<b class="nc"><i>88</i>&nbsp;    }</b>
+<i>89</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 00:14</div>
+</div>
+</body>
+</html>

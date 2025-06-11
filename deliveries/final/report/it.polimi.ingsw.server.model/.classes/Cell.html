@@ -1,0 +1,209 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Cell</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.server.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Cell (it.polimi.ingsw.server.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Cell</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (31/ 31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.server.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/**
+<i>4</i>&nbsp; * Class for each cell of GameBoard
+<i>5</i>&nbsp; * @author Eugenio Facciolo
+<i>6</i>&nbsp; */
+<i>7</i>&nbsp;public class Cell {
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;    private int row, column, level;
+<i>10</i>&nbsp;    private boolean isOccupied;
+<i>11</i>&nbsp;    private boolean dome;
+<i>12</i>&nbsp;    private Worker worker;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * Builder of Cell
+<i>16</i>&nbsp;     * Set construction level at 0 , set Cell is free , set there is not a Dome
+<i>17</i>&nbsp;     * @param row the row of the cell
+<i>18</i>&nbsp;     * @param column the column of the cell
+<i>19</i>&nbsp;     */
+<b class="fc"><i>20</i>&nbsp;    public Cell(int row, int column) {</b>
+<b class="fc"><i>21</i>&nbsp;        this.level = 0;</b>
+<b class="fc"><i>22</i>&nbsp;        this.isOccupied = false;</b>
+<b class="fc"><i>23</i>&nbsp;        this.dome = false;</b>
+<b class="fc"><i>24</i>&nbsp;        this.worker = null;</b>
+<b class="fc"><i>25</i>&nbsp;        this.row = row;</b>
+<b class="fc"><i>26</i>&nbsp;        this.column = column;</b>
+<b class="fc"><i>27</i>&nbsp;    }</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * Row of this cell
+<i>31</i>&nbsp;     * @return cell&#39;s row
+<i>32</i>&nbsp;     */
+<i>33</i>&nbsp;    public int getRow(){
+<b class="fc"><i>34</i>&nbsp;        return this.row;</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * Column of this cell
+<i>39</i>&nbsp;     * @return cell&#39;s column
+<i>40</i>&nbsp;     */
+<i>41</i>&nbsp;    public int getColumn(){
+<b class="fc"><i>42</i>&nbsp;        return this.column;</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * Construction level in this cell
+<i>47</i>&nbsp;     * @return construction level
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    public int getLevel() {
+<b class="fc"><i>50</i>&nbsp;        return this.level;</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * If Cell contains a Dome or a Worker
+<i>55</i>&nbsp;     * @return false if Cell is free , true otherwise
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    public boolean getisOccupied() {
+<b class="fc"><i>58</i>&nbsp;        return this.isOccupied;</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * If Cell contains a Dome
+<i>63</i>&nbsp;     * @return true if Cell have a dome, false otherwise
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    public boolean getDome() {
+<b class="fc"><i>66</i>&nbsp;        return this.dome;</b>
+<i>67</i>&nbsp;    }
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    /**
+<i>70</i>&nbsp;     * Setter of construction level
+<i>71</i>&nbsp;     */
+<i>72</i>&nbsp;    public void levelUp() {
+<b class="fc"><i>73</i>&nbsp;        if(this.level == 3){</b>
+<b class="fc"><i>74</i>&nbsp;            this.level++;</b>
+<b class="fc"><i>75</i>&nbsp;            setDome();</b>
+<i>76</i>&nbsp;        } else
+<b class="fc"><i>77</i>&nbsp;            this.level ++;</b>
+<b class="fc"><i>78</i>&nbsp;    }</b>
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    /**
+<i>81</i>&nbsp;     * Set a level down
+<i>82</i>&nbsp;     */
+<i>83</i>&nbsp;    public void levelDown() {
+<b class="fc"><i>84</i>&nbsp;        this.level --;</b>
+<b class="fc"><i>85</i>&nbsp;    }</b>
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /**
+<i>88</i>&nbsp;     * Setter if cell is occupied
+<i>89</i>&nbsp;     * @param condition false if Cell is free , true otherwise
+<i>90</i>&nbsp;     */
+<b class="fc"><i>91</i>&nbsp;    public void setisOccupied(boolean condition) {this.isOccupied = condition;}</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    /**
+<i>94</i>&nbsp;     * Put a dome in this cell
+<i>95</i>&nbsp;     */
+<i>96</i>&nbsp;    public void setDome() {
+<b class="fc"><i>97</i>&nbsp;        this.isOccupied =true;</b>
+<b class="fc"><i>98</i>&nbsp;        this.dome = true;</b>
+<b class="fc"><i>99</i>&nbsp;    }</b>
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;    /**
+<i>102</i>&nbsp;     *
+<i>103</i>&nbsp;     * @return the worker on the cell
+<i>104</i>&nbsp;     */
+<i>105</i>&nbsp;    public Worker getWorker() {
+<b class="fc"><i>106</i>&nbsp;        return this.worker;</b>
+<i>107</i>&nbsp;    }
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    /**
+<i>110</i>&nbsp;     * Setter for worker on the cell
+<i>111</i>&nbsp;     *
+<i>112</i>&nbsp;     * @param worker sets on the cell
+<i>113</i>&nbsp;     */
+<i>114</i>&nbsp;    public void setWorker(Worker worker) {
+<i>115</i>&nbsp;
+<b class="fc"><i>116</i>&nbsp;            this.worker = worker;</b>
+<i>117</i>&nbsp;
+<b class="fc"><i>118</i>&nbsp;            if(worker != null) {</b>
+<b class="fc"><i>119</i>&nbsp;                this.isOccupied = true;</b>
+<b class="fc"><i>120</i>&nbsp;                worker.setPosition(this);</b>
+<i>121</i>&nbsp;            }
+<i>122</i>&nbsp;            else
+<b class="fc"><i>123</i>&nbsp;                this.isOccupied = false;</b>
+<b class="fc"><i>124</i>&nbsp;    }</b>
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 00:14</div>
+</div>
+</body>
+</html>

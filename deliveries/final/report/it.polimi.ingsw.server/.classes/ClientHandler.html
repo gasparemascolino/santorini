@@ -1,0 +1,539 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ClientHandler</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.server</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ClientHandler (it.polimi.ingsw.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 173)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.server;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.server.model.Cell;
+<i>4</i>&nbsp;import it.polimi.ingsw.server.model.GameBoard;
+<i>5</i>&nbsp;import it.polimi.ingsw.server.model.Player;
+<i>6</i>&nbsp;import it.polimi.ingsw.server.model.Worker;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.io.IOException;
+<i>9</i>&nbsp;import java.io.ObjectInputStream;
+<i>10</i>&nbsp;import java.io.ObjectOutputStream;
+<i>11</i>&nbsp;import java.util.ArrayList;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import static it.polimi.ingsw.server.NotifyServer.*;
+<i>14</i>&nbsp;import static it.polimi.ingsw.server.Server.*;
+<i>15</i>&nbsp;import static it.polimi.ingsw.server.Server.board;
+<i>16</i>&nbsp;import static it.polimi.ingsw.server.controller.WorkerController.*;
+<i>17</i>&nbsp;import static it.polimi.ingsw.server.controller.divinities.Chronus.getChronusPower;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;/**
+<i>20</i>&nbsp; * ClientHandler uses by the thread for handel the client for all the game
+<i>21</i>&nbsp; * @author Gaspare Mascolino
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;public class ClientHandler implements Runnable {
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    public static NotifyServer notifyServer;
+<b class="nc"><i>27</i>&nbsp;    public static int currentclient = 1;</b>
+<b class="nc"><i>28</i>&nbsp;    public static ArrayList&lt;ObjectInputStream&gt; inputs = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>29</i>&nbsp;    public static ArrayList&lt;ObjectOutputStream&gt; outputs = new ArrayList&lt;&gt;();</b>
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;    private static int clientindex = 0;</b>
+<b class="nc"><i>32</i>&nbsp;    protected static boolean connectionoff=false;</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;    public ClientHandler() {</b>
+<i>37</i>&nbsp;
+<b class="nc"><i>38</i>&nbsp;        notifyServer = new NotifyServer();</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    @Override
+<i>44</i>&nbsp;    public void run() {
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;        try {
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;            clientindex++;</b>
+<b class="nc"><i>51</i>&nbsp;            ObjectInputStream input = new ObjectInputStream(clients.get(clientindex-1).getInputStream());</b>
+<b class="nc"><i>52</i>&nbsp;            ObjectOutputStream output = new ObjectOutputStream(clients.get(clientindex-1).getOutputStream());</b>
+<i>53</i>&nbsp;
+<b class="nc"><i>54</i>&nbsp;            inputs.add(input);</b>
+<b class="nc"><i>55</i>&nbsp;            outputs.add(output);</b>
+<i>56</i>&nbsp;
+<b class="nc"><i>57</i>&nbsp;            notifyServer.SetPlayers();</b>
+<b class="nc"><i>58</i>&nbsp;            if(!connectionoff) notifyServer.Turn();</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;        } catch (IOException | InterruptedException | ClassNotFoundException e) {</b>
+<b class="nc"><i>62</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i>63</i>&nbsp;        }</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    }
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    /**
+<i>69</i>&nbsp;     * Setter for initial position of Worker, method called by a player at the start of the game
+<i>70</i>&nbsp;     *
+<i>71</i>&nbsp;     * @param worker set this worker
+<i>72</i>&nbsp;     * @param board  GameBoard
+<i>73</i>&nbsp;     * @throws IOException for input or output exception
+<i>74</i>&nbsp;     * @throws ClassNotFoundException if the class doesn&#39;t exist
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    public static void SetInitialWorkerPosition(Worker worker, GameBoard board) throws IOException, ClassNotFoundException {
+<i>77</i>&nbsp;
+<b class="nc"><i>78</i>&nbsp;        outputs.get(currentclient-1).writeObject(&quot;Set worker position&quot;);</b>
+<b class="nc"><i>79</i>&nbsp;        int row=(int) inputs.get(currentclient-1).readObject();</b>
+<b class="nc"><i>80</i>&nbsp;        int column=(int) inputs.get(currentclient-1).readObject();</b>
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;        if (!board.cell[row][column].getisOccupied()) {</b>
+<b class="nc"><i>83</i>&nbsp;            board.cell[row][column].setWorker(worker);</b>
+<b class="nc"><i>84</i>&nbsp;            board.cell[row][column].setisOccupied(true);</b>
+<i>85</i>&nbsp;
+<b class="nc"><i>86</i>&nbsp;            outputs.get(currentclient-1).writeObject(&quot;Cell is available!&quot;);</b>
+<i>87</i>&nbsp;        }
+<i>88</i>&nbsp;        else {
+<b class="nc"><i>89</i>&nbsp;            outputs.get(currentclient-1).writeObject(&quot;Cell is unavailable, retry&quot;);</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;            SetInitialWorkerPosition(worker, board);</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;        }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    }
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    /**
+<i>98</i>&nbsp;     * Requires the cell where the worker wants to move on until the choice is available
+<i>99</i>&nbsp;     *
+<i>100</i>&nbsp;     * @param worker worker to move
+<i>101</i>&nbsp;     * @param board GameBoard
+<i>102</i>&nbsp;     * @return the cell where the worker moves on
+<i>103</i>&nbsp;     * @throws IOException  for input or output exception
+<i>104</i>&nbsp;     * @throws ClassNotFoundException if the class doesn&#39;t exist
+<i>105</i>&nbsp;     * @throws InterruptedException for interrupted
+<i>106</i>&nbsp;     */
+<i>107</i>&nbsp;    public static Cell cellToMoveOn(Worker worker, GameBoard board) throws IOException, ClassNotFoundException, InterruptedException {
+<b class="nc"><i>108</i>&nbsp;        boolean condition = false;</b>
+<b class="nc"><i>109</i>&nbsp;        int row = -1, column = -1;</b>
+<i>110</i>&nbsp;
+<b class="nc"><i>111</i>&nbsp;        looseCondition(worker.getIndex(), worker.getIndex());</b>
+<b class="nc"><i>112</i>&nbsp;        outputs.get(currentclient-1).writeObject(&quot;Choose the cell where you want to move on:&quot;);</b>
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;        while (!condition) {</b>
+<i>115</i>&nbsp;
+<b class="nc"><i>116</i>&nbsp;            outputs.get(currentclient-1).writeObject(&quot;Cell chosen&quot;);</b>
+<b class="nc"><i>117</i>&nbsp;            row = (int) inputs.get(currentclient-1).readObject();</b>
+<b class="nc"><i>118</i>&nbsp;            column = (int) inputs.get(currentclient-1).readObject();</b>
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;            int oldrow= worker.getPosition().getRow();</b>
+<b class="nc"><i>121</i>&nbsp;            int oldcolumn= worker.getPosition().getColumn();</b>
+<b class="nc"><i>122</i>&nbsp;            int oldlevel = worker.getPosition().getLevel();</b>
+<i>123</i>&nbsp;
+<b class="nc"><i>124</i>&nbsp;            condition = Move(worker, row, column, board);</b>
+<i>125</i>&nbsp;
+<b class="nc"><i>126</i>&nbsp;            if(!condition){</b>
+<b class="nc"><i>127</i>&nbsp;                NotifyCellIsUnavailable();</b>
+<i>128</i>&nbsp;            } else{
+<b class="nc"><i>129</i>&nbsp;                outputs.get(currentclient-1).writeObject(&quot;Available!&quot;);</b>
+<i>130</i>&nbsp;
+<b class="nc"><i>131</i>&nbsp;                NotifyMove(worker,oldrow,oldcolumn);</b>
+<i>132</i>&nbsp;
+<b class="nc"><i>133</i>&nbsp;                if ((oldlevel == 2) &amp;&amp; (worker.getPosition().getLevel() == 3))</b>
+<b class="nc"><i>134</i>&nbsp;                    winCondition();</b>
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;            }
+<i>138</i>&nbsp;
+<b class="nc"><i>139</i>&nbsp;        }</b>
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;        return board.cell[row][column];</b>
+<i>143</i>&nbsp;    }
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    /**
+<i>146</i>&nbsp;     * Requires the cell where the worker wants to build on until the choice is available
+<i>147</i>&nbsp;     *
+<i>148</i>&nbsp;     * @param worker worker to move
+<i>149</i>&nbsp;     * @param board GameBoard
+<i>150</i>&nbsp;     * @return the cell where the worker builds on
+<i>151</i>&nbsp;     * @throws IOException for input or output exception
+<i>152</i>&nbsp;     * @throws ClassNotFoundException if the class doesn&#39;t exist
+<i>153</i>&nbsp;     * @throws InterruptedException for interrupted
+<i>154</i>&nbsp;     */
+<i>155</i>&nbsp;    public static Cell cellToBuildOn(Worker worker, GameBoard board) throws IOException, ClassNotFoundException, InterruptedException {
+<b class="nc"><i>156</i>&nbsp;        boolean condition = false;</b>
+<b class="nc"><i>157</i>&nbsp;        int row = -1, column = -1;</b>
+<i>158</i>&nbsp;
+<b class="nc"><i>159</i>&nbsp;        Cell[] availableposition = enableToBuild(board.players.get(currentclient-1).getWorker(worker.getIndex()), board);</b>
+<b class="nc"><i>160</i>&nbsp;        if(availableposition[0]==null)</b>
+<b class="nc"><i>161</i>&nbsp;            looseCondition(-1,-1);</b>
+<i>162</i>&nbsp;
+<b class="nc"><i>163</i>&nbsp;        outputs.get(currentclient-1).writeObject(&quot;Choose the cell where you want to build on:&quot;);</b>
+<i>164</i>&nbsp;
+<b class="nc"><i>165</i>&nbsp;        while (!condition) {</b>
+<i>166</i>&nbsp;
+<b class="nc"><i>167</i>&nbsp;            outputs.get(currentclient-1).writeObject(&quot;Cell chosen&quot;);</b>
+<b class="nc"><i>168</i>&nbsp;            row = (int) inputs.get(currentclient-1).readObject();</b>
+<b class="nc"><i>169</i>&nbsp;            column = (int) inputs.get(currentclient-1).readObject();</b>
+<i>170</i>&nbsp;
+<b class="nc"><i>171</i>&nbsp;            condition = Build(worker, row, column, board);</b>
+<i>172</i>&nbsp;
+<b class="nc"><i>173</i>&nbsp;            if(!condition){</b>
+<b class="nc"><i>174</i>&nbsp;                NotifyCellIsUnavailable();</b>
+<i>175</i>&nbsp;            } else {
+<b class="nc"><i>176</i>&nbsp;                outputs.get(currentclient-1).writeObject(&quot;Available!&quot;);</b>
+<i>177</i>&nbsp;
+<b class="nc"><i>178</i>&nbsp;                NotifyBuild(row,column);</b>
+<i>179</i>&nbsp;            }
+<i>180</i>&nbsp;
+<i>181</i>&nbsp;        }
+<i>182</i>&nbsp;
+<b class="nc"><i>183</i>&nbsp;        return board.cell[row][column];</b>
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;    }
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;    /**
+<i>188</i>&nbsp;     * @param worker the worker who moves in another cell
+<i>189</i>&nbsp;     * @param oldrow cell&#39;s row where worker moves
+<i>190</i>&nbsp;     * @param oldcolumn cell&#39;s column where worker moves
+<i>191</i>&nbsp;     * @throws IOException for input or output exception
+<i>192</i>&nbsp;     */
+<i>193</i>&nbsp;    public static void NotifyMove(Worker worker,int oldrow,int oldcolumn) throws IOException{
+<b class="nc"><i>194</i>&nbsp;        for(int i = 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>195</i>&nbsp;            clientdisconnected=i;</b>
+<i>196</i>&nbsp;
+<b class="nc"><i>197</i>&nbsp;            outputs.get(i).writeObject(&quot;Move Worker&quot;);</b>
+<b class="nc"><i>198</i>&nbsp;            outputs.get(i).writeObject(worker.getIndex());</b>
+<b class="nc"><i>199</i>&nbsp;            outputs.get(i).writeObject(oldrow);</b>
+<b class="nc"><i>200</i>&nbsp;            outputs.get(i).writeObject(oldcolumn);</b>
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;            outputs.get(i).writeObject(board.players.get(currentclient - 1).getWorker(worker.getIndex()).getPosition().getRow());</b>
+<b class="nc"><i>203</i>&nbsp;            outputs.get(i).writeObject(board.players.get(currentclient - 1).getWorker(worker.getIndex()).getPosition().getColumn());</b>
+<i>204</i>&nbsp;
+<i>205</i>&nbsp;        }
+<b class="nc"><i>206</i>&nbsp;        clientdisconnected=currentclient-1;</b>
+<i>207</i>&nbsp;    }
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;    /**
+<i>210</i>&nbsp;     * @param row cell&#39;s row where put a block
+<i>211</i>&nbsp;     * @param column cell&#39;s column where put a block
+<i>212</i>&nbsp;     * @throws IOException for input or output exception
+<i>213</i>&nbsp;     */
+<i>214</i>&nbsp;    public static void NotifyBuild(int row,int column) throws IOException{
+<b class="nc"><i>215</i>&nbsp;        for(int i = 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>216</i>&nbsp;            clientdisconnected=i;</b>
+<i>217</i>&nbsp;
+<b class="nc"><i>218</i>&nbsp;            outputs.get(i).writeObject(&quot;Build a block&quot;);</b>
+<b class="nc"><i>219</i>&nbsp;            outputs.get(i).writeObject(row);</b>
+<b class="nc"><i>220</i>&nbsp;            outputs.get(i).writeObject(column);</b>
+<b class="nc"><i>221</i>&nbsp;            outputs.get(i).writeObject(board.cell[row][column].getLevel());</b>
+<i>222</i>&nbsp;
+<i>223</i>&nbsp;        }
+<b class="nc"><i>224</i>&nbsp;        clientdisconnected=currentclient-1;</b>
+<i>225</i>&nbsp;    }
+<i>226</i>&nbsp;
+<i>227</i>&nbsp;    /**
+<i>228</i>&nbsp;     * @return active =1 active, =0 not active
+<i>229</i>&nbsp;     * @throws IOException for input or output exception
+<i>230</i>&nbsp;     * @throws ClassNotFoundException if the class doesn&#39;t exist
+<i>231</i>&nbsp;     */
+<i>232</i>&nbsp;    public static int NotifyDivinityPowerOn() throws IOException, ClassNotFoundException {
+<b class="nc"><i>233</i>&nbsp;        outputs.get(currentclient-1).writeObject(&quot;Do you want to use the divinity power?&quot;);</b>
+<b class="nc"><i>234</i>&nbsp;        outputs.get(currentclient-1).writeObject(&quot;Power Chosen&quot;);</b>
+<b class="nc"><i>235</i>&nbsp;        int active = (int) inputs.get(currentclient-1).readObject();</b>
+<b class="nc"><i>236</i>&nbsp;        return (active);</b>
+<i>237</i>&nbsp;    }
+<i>238</i>&nbsp;
+<i>239</i>&nbsp;    /**
+<i>240</i>&nbsp;     * @return active =1 active, =0 not active
+<i>241</i>&nbsp;     * @throws IOException for input or output exception
+<i>242</i>&nbsp;     * @throws ClassNotFoundException if the class doesn&#39;t exist
+<i>243</i>&nbsp;     */
+<i>244</i>&nbsp;    public static int NotifyDivinityPowerOnExtra() throws IOException, ClassNotFoundException {
+<b class="nc"><i>245</i>&nbsp;        outputs.get(currentclient-1).writeObject(&quot;Do you want to use the divinity power?&quot;);</b>
+<b class="nc"><i>246</i>&nbsp;        outputs.get(currentclient-1).writeObject(&quot;Power Chosen Extra&quot;);</b>
+<b class="nc"><i>247</i>&nbsp;        int active = (int) inputs.get(currentclient-1).readObject();</b>
+<b class="nc"><i>248</i>&nbsp;        return (active);</b>
+<i>249</i>&nbsp;    }
+<i>250</i>&nbsp;
+<i>251</i>&nbsp;    /**
+<i>252</i>&nbsp;     * @throws IOException for input or output exception
+<i>253</i>&nbsp;     * @throws ClassNotFoundException if the class doesn&#39;t exist
+<i>254</i>&nbsp;     */
+<i>255</i>&nbsp;    public static void NotifyDivinityPowerOff() throws IOException, ClassNotFoundException {
+<b class="nc"><i>256</i>&nbsp;        outputs.get(currentclient-1).writeObject(&quot;Power Off&quot;);</b>
+<i>257</i>&nbsp;    }
+<i>258</i>&nbsp;
+<i>259</i>&nbsp;    /**
+<i>260</i>&nbsp;     * @throws IOException for input or output exception
+<i>261</i>&nbsp;     */
+<i>262</i>&nbsp;    public static void NotifyUseDivinityPower() throws IOException {
+<b class="nc"><i>263</i>&nbsp;        for(int i = 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>264</i>&nbsp;            clientdisconnected=i;</b>
+<b class="nc"><i>265</i>&nbsp;            if(i!=currentclient-1){</b>
+<b class="nc"><i>266</i>&nbsp;                outputs.get(i).writeObject(&quot;Notify useDivinityPower&quot;);</b>
+<b class="nc"><i>267</i>&nbsp;                if(board.players.get(currentclient-1).getDivinity().equals(&quot;Athena&quot;)) outputs.get(i).writeObject(&quot;Athena Power is activated&quot;);</b>
+<b class="nc"><i>268</i>&nbsp;                else outputs.get(i).writeObject(board.players.get(currentclient-1).getNickname() +&quot; has just used the divinity power&quot;);</b>
+<i>269</i>&nbsp;            }
+<i>270</i>&nbsp;        }
+<b class="nc"><i>271</i>&nbsp;        clientdisconnected=currentclient-1;</b>
+<i>272</i>&nbsp;    }
+<i>273</i>&nbsp;
+<i>274</i>&nbsp;    /**
+<i>275</i>&nbsp;     * @param row cell&#39;s row where put a dome
+<i>276</i>&nbsp;     * @param column cell&#39;s column where put a dome
+<i>277</i>&nbsp;     * @throws IOException for input or output exception
+<i>278</i>&nbsp;     */
+<i>279</i>&nbsp;    public static void NotifySetDome(int row,int column) throws IOException {
+<b class="nc"><i>280</i>&nbsp;        for(int i = 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>281</i>&nbsp;            clientdisconnected=i;</b>
+<i>282</i>&nbsp;
+<b class="nc"><i>283</i>&nbsp;            outputs.get(i).writeObject(&quot;Notify setDome&quot;);</b>
+<b class="nc"><i>284</i>&nbsp;            outputs.get(i).writeObject(row);</b>
+<b class="nc"><i>285</i>&nbsp;            outputs.get(i).writeObject(column);</b>
+<i>286</i>&nbsp;
+<i>287</i>&nbsp;        }
+<b class="nc"><i>288</i>&nbsp;        clientdisconnected=currentclient-1;</b>
+<i>289</i>&nbsp;    }
+<i>290</i>&nbsp;
+<i>291</i>&nbsp;    /**
+<i>292</i>&nbsp;     * @param divinity diviinity to notify
+<i>293</i>&nbsp;     * @throws IOException for input or output exception
+<i>294</i>&nbsp;     */
+<i>295</i>&nbsp;    public static void NotifyDivinity(String divinity) throws IOException {
+<b class="nc"><i>296</i>&nbsp;        for (int i = 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>297</i>&nbsp;            clientdisconnected=i;</b>
+<b class="nc"><i>298</i>&nbsp;            outputs.get(i).writeObject(divinity);</b>
+<i>299</i>&nbsp;        }
+<b class="nc"><i>300</i>&nbsp;        clientdisconnected=currentclient-1;</b>
+<i>301</i>&nbsp;    }
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;    /**
+<i>304</i>&nbsp;     * @param pushrow row where the enemy where pushed
+<i>305</i>&nbsp;     * @param pushcolumn column where the enemy where pushed
+<i>306</i>&nbsp;     * @throws IOException for input or output exception
+<i>307</i>&nbsp;     */
+<i>308</i>&nbsp;    public static void NotifyPushedPosition(int pushrow, int pushcolumn) throws IOException {
+<b class="nc"><i>309</i>&nbsp;        for (int i = 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>310</i>&nbsp;            clientdisconnected=i;</b>
+<i>311</i>&nbsp;
+<b class="nc"><i>312</i>&nbsp;            outputs.get(i).writeObject(&quot;Push done&quot;);</b>
+<b class="nc"><i>313</i>&nbsp;            outputs.get(i).writeObject(pushrow);</b>
+<b class="nc"><i>314</i>&nbsp;            outputs.get(i).writeObject(pushcolumn);</b>
+<i>315</i>&nbsp;        }
+<b class="nc"><i>316</i>&nbsp;        clientdisconnected=currentclient-1;</b>
+<i>317</i>&nbsp;    }
+<i>318</i>&nbsp;
+<i>319</i>&nbsp;    /**
+<i>320</i>&nbsp;     * @throws IOException for input or output exception
+<i>321</i>&nbsp;     */
+<i>322</i>&nbsp;    public static void NotifyResetPosition() throws IOException {
+<b class="nc"><i>323</i>&nbsp;        for (int i = 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>324</i>&nbsp;            clientdisconnected=i;</b>
+<b class="nc"><i>325</i>&nbsp;            outputs.get(i).writeObject(&quot;Reset position&quot;);</b>
+<i>326</i>&nbsp;
+<i>327</i>&nbsp;        }
+<b class="nc"><i>328</i>&nbsp;        clientdisconnected=currentclient-1;</b>
+<i>329</i>&nbsp;    }
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;    /**
+<i>332</i>&nbsp;     * @throws IOException for input or output exception
+<i>333</i>&nbsp;     */
+<i>334</i>&nbsp;    public static void NotifyCellIsUnavailable() throws IOException {
+<b class="nc"><i>335</i>&nbsp;        outputs.get(currentclient-1).writeObject(&quot;Cell is unavailable, retry&quot;);</b>
+<i>336</i>&nbsp;    }
+<i>337</i>&nbsp;
+<i>338</i>&nbsp;    /**
+<i>339</i>&nbsp;     * @param newrow cell&#39;s row where wants to move on
+<i>340</i>&nbsp;     * @param newcolumn cell&#39;s column where wants to move on
+<i>341</i>&nbsp;     * @param oldrow cell&#39;s row where the worker is before the movement
+<i>342</i>&nbsp;     * @param oldcolumn cell&#39;s column where the worker is before the movement
+<i>343</i>&nbsp;     * @throws IOException for input or output exception
+<i>344</i>&nbsp;     */
+<i>345</i>&nbsp;    public static void NotifyCantLevelUp(int newrow, int newcolumn, int oldrow, int oldcolumn) throws IOException {
+<b class="nc"><i>346</i>&nbsp;        for (int i = 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>347</i>&nbsp;            clientdisconnected=i;</b>
+<b class="nc"><i>348</i>&nbsp;            outputs.get(i).writeObject(&quot;Can&#39;t level up&quot;);</b>
+<b class="nc"><i>349</i>&nbsp;            outputs.get(i).writeObject(newrow);</b>
+<b class="nc"><i>350</i>&nbsp;            outputs.get(i).writeObject(newcolumn);</b>
+<b class="nc"><i>351</i>&nbsp;            outputs.get(i).writeObject(oldrow);</b>
+<b class="nc"><i>352</i>&nbsp;            outputs.get(i).writeObject(oldcolumn);</b>
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;        }
+<b class="nc"><i>355</i>&nbsp;        clientdisconnected=currentclient-1;</b>
+<i>356</i>&nbsp;    }
+<i>357</i>&nbsp;
+<i>358</i>&nbsp;
+<i>359</i>&nbsp;    /**
+<i>360</i>&nbsp;     * Notify end of the game, stop Turn method
+<i>361</i>&nbsp;     * @throws IOException for input or output exception
+<i>362</i>&nbsp;     */
+<i>363</i>&nbsp;    public static void winCondition() throws IOException {
+<i>364</i>&nbsp;
+<b class="nc"><i>365</i>&nbsp;        for(int i= 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>366</i>&nbsp;            outputs.get(i).writeObject(&quot;EndGame&quot;);</b>
+<b class="nc"><i>367</i>&nbsp;            outputs.get(i).writeObject(board.players.get(currentclient-1).getNickname()+&quot; WIN!&quot;);</b>
+<b class="nc"><i>368</i>&nbsp;            outputs.get(i).close();</b>
+<b class="nc"><i>369</i>&nbsp;            ingame=false;</b>
+<i>370</i>&nbsp;
+<i>371</i>&nbsp;        }
+<i>372</i>&nbsp;
+<i>373</i>&nbsp;    }
+<i>374</i>&nbsp;
+<i>375</i>&nbsp;    /**
+<i>376</i>&nbsp;     * Check if a player looses for &quot;can&#39;t move&quot; &quot;can&#39;t build&quot; &quot;Chrous power&quot;
+<i>377</i>&nbsp;     * In a 3 players game, the looser player become a viewer of the game which goes on
+<i>378</i>&nbsp;     * In a 2 players game, call win condition method
+<i>379</i>&nbsp;     * @param workerindex1 index of worker 1
+<i>380</i>&nbsp;     * @param workerindex2 index of worker 2
+<i>381</i>&nbsp;     * @throws IOException for input or output exception
+<i>382</i>&nbsp;     * @throws InterruptedException for interupted exception
+<i>383</i>&nbsp;     */
+<i>384</i>&nbsp;    public static void looseCondition(int workerindex1, int workerindex2) throws IOException, InterruptedException {
+<i>385</i>&nbsp;
+<i>386</i>&nbsp;
+<b class="nc"><i>387</i>&nbsp;        Cell[] availablepostion1 = enableToMove(board.players.get(currentclient-1).getWorker(workerindex1), board);</b>
+<b class="nc"><i>388</i>&nbsp;        Cell[] availableposition2 = enableToMove(board.players.get(currentclient-1).getWorker(workerindex2), board);</b>
+<i>389</i>&nbsp;
+<b class="nc"><i>390</i>&nbsp;        if(getChronusPower()){</b>
+<b class="nc"><i>391</i>&nbsp;            if(completetowers&gt;=5){</b>
+<b class="nc"><i>392</i>&nbsp;                for(int i=0;i&lt;playernum;i++){</b>
+<b class="nc"><i>393</i>&nbsp;                    outputs.get(i).writeObject(&quot;Chronus power is activated&quot;);</b>
+<b class="nc"><i>394</i>&nbsp;                   if(board.players.get(i).getDivinity().equals(&quot;Chronus&quot;)){</b>
+<b class="nc"><i>395</i>&nbsp;                       currentclient=i+1;</b>
+<i>396</i>&nbsp;                   }
+<i>397</i>&nbsp;                }
+<b class="nc"><i>398</i>&nbsp;                winCondition();</b>
+<i>399</i>&nbsp;            }
+<i>400</i>&nbsp;        };
+<i>401</i>&nbsp;
+<b class="nc"><i>402</i>&nbsp;        if (((availablepostion1[0] == null ) &amp;&amp; (availableposition2[0] == null)) || (workerindex1 == -1)) {</b>
+<i>403</i>&nbsp;
+<b class="nc"><i>404</i>&nbsp;            if(names.size()==3){</b>
+<i>405</i>&nbsp;
+<b class="nc"><i>406</i>&nbsp;                int row1 = board.players.get(currentclient-1).getWorker(1).getPosition().getRow();</b>
+<b class="nc"><i>407</i>&nbsp;                int column1 = board.players.get(currentclient-1).getWorker(1).getPosition().getColumn();</b>
+<b class="nc"><i>408</i>&nbsp;                int row2 = board.players.get(currentclient-1).getWorker(2).getPosition().getRow();</b>
+<b class="nc"><i>409</i>&nbsp;                int column2 = board.players.get(currentclient-1).getWorker(2).getPosition().getColumn();</b>
+<i>410</i>&nbsp;
+<b class="nc"><i>411</i>&nbsp;                board.players.get(currentclient-1).getWorker(workerindex1).getPosition().setWorker(null);</b>
+<b class="nc"><i>412</i>&nbsp;                board.players.get(currentclient-1).getWorker(workerindex1).getPosition().setisOccupied(false);</b>
+<b class="nc"><i>413</i>&nbsp;                if(workerindex1==1){</b>
+<b class="nc"><i>414</i>&nbsp;                    board.players.get(currentclient-1).getWorker(workerindex1+1).getPosition().setWorker(null);</b>
+<b class="nc"><i>415</i>&nbsp;                    board.players.get(currentclient-1).getWorker(workerindex1+1).getPosition().setisOccupied(false);</b>
+<b class="nc"><i>416</i>&nbsp;                }else if(workerindex1==2){</b>
+<b class="nc"><i>417</i>&nbsp;                    board.players.get(currentclient-1).getWorker(workerindex1-1).getPosition().setWorker(null);</b>
+<b class="nc"><i>418</i>&nbsp;                    board.players.get(currentclient-1).getWorker(workerindex1-1).getPosition().setisOccupied(false);</b>
+<i>419</i>&nbsp;                }
+<i>420</i>&nbsp;
+<b class="nc"><i>421</i>&nbsp;                for (int i = 0; i &lt; playernum; i++) {</b>
+<b class="nc"><i>422</i>&nbsp;                    if(i==currentclient-1){</b>
+<b class="nc"><i>423</i>&nbsp;                        outputs.get(i).writeObject(&quot;Lost&quot;);</b>
+<i>424</i>&nbsp;                    }else{
+<b class="nc"><i>425</i>&nbsp;                        clientdisconnected=i;</b>
+<b class="nc"><i>426</i>&nbsp;                        outputs.get(i).writeObject(&quot;Exit&quot;);</b>
+<b class="nc"><i>427</i>&nbsp;                        outputs.get(i).writeObject(&quot;Player &quot;+  board.players.get(currentclient-1).getNickname() +&quot; lost the game because he couldn&#39;t move in any cell&quot;);</b>
+<i>428</i>&nbsp;                    }
+<b class="nc"><i>429</i>&nbsp;                    outputs.get(i).writeObject(row1);</b>
+<b class="nc"><i>430</i>&nbsp;                    outputs.get(i).writeObject(column1);</b>
+<b class="nc"><i>431</i>&nbsp;                    outputs.get(i).writeObject(row2);</b>
+<b class="nc"><i>432</i>&nbsp;                    outputs.get(i).writeObject(column2);</b>
+<i>433</i>&nbsp;                }
+<i>434</i>&nbsp;
+<b class="nc"><i>435</i>&nbsp;                outputs.get(currentclient-1).writeObject(&quot;Wait the others players for join...&quot;);</b>
+<i>436</i>&nbsp;
+<b class="nc"><i>437</i>&nbsp;                playerlost=currentclient;</b>
+<b class="nc"><i>438</i>&nbsp;                names.remove(currentclient-1);</b>
+<i>439</i>&nbsp;
+<b class="nc"><i>440</i>&nbsp;                notifyServer.nextClient();</b>
+<b class="nc"><i>441</i>&nbsp;            }</b>
+<i>442</i>&nbsp;            else{
+<b class="nc"><i>443</i>&nbsp;                outputs.get(currentclient-1).writeObject(&quot;You loose! Can&#39;t move in any position&quot;);</b>
+<b class="nc"><i>444</i>&nbsp;                outputs.get(currentclient-1).close();</b>
+<b class="nc"><i>445</i>&nbsp;                outputs.remove(currentclient-1);</b>
+<b class="nc"><i>446</i>&nbsp;                outputs.get(0).writeObject(&quot;You Win! Enemy can&#39;t move&quot;);</b>
+<b class="nc"><i>447</i>&nbsp;                outputs.get(0).close();</b>
+<b class="nc"><i>448</i>&nbsp;                outputs.remove(0);</b>
+<b class="nc"><i>449</i>&nbsp;                ingame=false;</b>
+<i>450</i>&nbsp;            }
+<i>451</i>&nbsp;
+<i>452</i>&nbsp;        }
+<i>453</i>&nbsp;
+<i>454</i>&nbsp;    }
+<i>455</i>&nbsp;}
+<i>456</i>&nbsp;
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 00:14</div>
+</div>
+</body>
+</html>
