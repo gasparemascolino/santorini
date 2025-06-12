@@ -114,9 +114,7 @@ Our implementation supports **all official divine powers**.
 
 (Connect to the server IP address and port, then start playing)
 
-**Important**
-The two clients must point to the same server's ip (default 127.0.0.1
-)
+**Important**: the two clients must point to the same server's ip (default is 127.0.0.1)
 
 ---
 
