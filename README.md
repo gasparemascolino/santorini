@@ -93,7 +93,7 @@ Our implementation supports **all official divine powers**.
 - **client-1.0.jar:** The client application for players.
 
 ### UML
-![uml](uml/summar-uml.png)
+![uml](assets/summar-uml.png)
 
 **Usage:**
 
@@ -122,10 +122,10 @@ Our implementation supports **all official divine powers**.
 
 1. **Start the Server:** Run the server JAR to initialize the game session manager.
 2. **Start the Client:** Each player launches their client, press play, and connects to the server (E.g. 127.0.0.1).
-   ![menu](screenshots/menu.png)
-   ![server-connection](screenshots/server-connection.png)
+   ![menu](assets/menu.png)
+   ![server-connection](assets/server-connection.png)
 3. **Game Initialization:** Players 1 select divinity for the game.
-   ![select-divinity](screenshots/select-divinity.png)
+   ![select-divinity](assets/select-divinity.png)
 4. **Gameplay:** Players alternate turns:
 
    - Move their worker.
@@ -134,7 +134,7 @@ Our implementation supports **all official divine powers**.
    - The objective is to reach the third level with a worker, or fulfill other victory conditions based on divine powers.
    
 5. **Winning:** The first player to meet the win conditions wins the game.
-   ![gameplay](screenshots/gameplay.png)
+   ![gameplay](assets/gameplay.png)
 
 ---
 
